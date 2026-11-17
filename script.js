@@ -3,6 +3,7 @@
 const CART_KEY = "nordicshop_cart";
 const NEWSLETTER_KEY = "nordicshop_newsletter";
 const ORDERS_KEY = "nordicshop_orders";
+const PAGES_KEY = "nordicshop_pages";
 
 /* ---------- Sidkonfiguration ----------
  * Registrera nya sidor här. Varje ny HTML-sida behöver bara:
@@ -17,6 +18,8 @@ const PAGE_CONFIG = {
   "om-oss": { title: "Om oss – Nordic Shop", nav: "om-oss.html" },
   kundvagn: { title: "Kundvagn – Nordic Shop", nav: "kundvagn.html" },
   produkt: { title: "Produkt – Nordic Shop", nav: "produkter.html" },
+  bygg: { title: "Sidbyggare – Nordic Shop", nav: "bygg.html" },
+  sida: { title: "Sida – Nordic Shop", nav: "" },
 };
 
 /* ---------- Produktkatalog (används av sök) ---------- */
@@ -488,6 +491,193 @@ function removeItem(id) {
   renderCartPage();
 }
 
+/* ---------- Sidbyggare ---------- */
+function getPages() {
+  try {
+    return JSON.parse(localStorage.getItem(PAGES_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function savePages(pages) {
+  localStorage.setItem(PAGES_KEY, JSON.stringify(pages));
+}
+
+function slugify(str) {
+  return String(str)
+    .toLowerCase()
+    .trim()
+    .replace(/[åä]/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getPageBySlug(slug) {
+  return getPages().find((p) => p.slug === slug);
+}
+
+function renderPageList() {
+  const list = document.getElementById("pageList");
+  if (!list) return;
+  const pages = getPages();
+  if (pages.length === 0) {
+    list.innerHTML = '<p class="search-empty">Inga sidor skapade ännu.</p>';
+    return;
+  }
+  list.innerHTML = "";
+  pages.forEach((p) => {
+    const row = document.createElement("div");
+    row.className = "page-row";
+    row.innerHTML = `
+      <div>
+        <strong>${p.title}</strong>
+        <div class="product-desc">/sida.html?slug=${encodeURIComponent(p.slug)}</div>
+      </div>
+      <div class="page-row-actions">
+        <a class="btn btn-small" href="sida.html?slug=${encodeURIComponent(p.slug)}" target="_blank" rel="noopener">Visa</a>
+        <button type="button" class="btn btn-ghost btn-small" data-action="edit">Redigera</button>
+        <button type="button" class="remove-btn" data-action="delete">Ta bort</button>
+      </div>
+    `;
+    row.querySelector('[data-action="edit"]').addEventListener("click", () => {
+      fillPageForm(p);
+    });
+    row.querySelector('[data-action="delete"]').addEventListener("click", () => {
+      if (!confirm(`Ta bort sidan "${p.title}"?`)) return;
+      savePages(getPages().filter((x) => x.slug !== p.slug));
+      renderPageList();
+      showToast("Sidan togs bort");
+    });
+    list.appendChild(row);
+  });
+}
+
+function fillPageForm(page) {
+  const form = document.getElementById("pageForm");
+  if (!form) return;
+  form.elements.title.value = page.title;
+  form.elements.slug.value = page.slug;
+  form.elements.intro.value = page.intro || "";
+  form.elements.body.value = page.body || "";
+  form.elements.products.value = (page.products || []).join(",");
+  form.dataset.editing = page.slug;
+  form.querySelector('button[type="submit"]').textContent = "Spara ändringar";
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function initPageBuilder() {
+  const form = document.getElementById("pageForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = form.elements.title.value.trim();
+    let slug = form.elements.slug.value.trim();
+    if (!title) return;
+    if (!slug) slug = slugify(title);
+    slug = slugify(slug);
+    if (!slug) {
+      showToast("Ange en giltig slug");
+      return;
+    }
+
+    const editing = form.dataset.editing || "";
+    const pages = getPages();
+    const conflict = pages.find((p) => p.slug === slug && p.slug !== editing);
+    if (conflict) {
+      showToast("Slug används redan – välj en annan");
+      return;
+    }
+
+    const productIds = form.elements.products.value
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .filter((id) => getProductById(id));
+
+    const page = {
+      title,
+      slug,
+      intro: form.elements.intro.value.trim(),
+      body: form.elements.body.value.trim(),
+      products: productIds,
+      updated: new Date().toISOString(),
+    };
+
+    const idx = pages.findIndex((p) => p.slug === editing);
+    if (idx >= 0) {
+      pages[idx] = page;
+    } else {
+      pages.push(page);
+    }
+    savePages(pages);
+
+    form.reset();
+    delete form.dataset.editing;
+    form.querySelector('button[type="submit"]').textContent = "Skapa sida";
+    renderPageList();
+    showToast(idx >= 0 ? "Sidan uppdaterades" : "Sidan skapades");
+  });
+
+  form.querySelector('[data-action="reset"]')?.addEventListener("click", () => {
+    form.reset();
+    delete form.dataset.editing;
+    form.querySelector('button[type="submit"]').textContent = "Skapa sida";
+  });
+
+  renderPageList();
+}
+
+function renderCustomPage() {
+  const root = document.getElementById("customPage");
+  if (!root) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get("slug");
+  const page = slug ? getPageBySlug(slug) : null;
+
+  if (!page) {
+    root.innerHTML = `
+      <div class="cart-empty">
+        <h2>Sidan hittades inte</h2>
+        <p>Skapa en sida i sidbyggaren först.</p>
+        <a href="bygg.html" class="btn btn-primary">Till sidbyggaren</a>
+      </div>
+    `;
+    return;
+  }
+
+  document.title = `${page.title} – Nordic Shop`;
+  const titleEl = document.getElementById("customTitle");
+  const introEl = document.getElementById("customIntro");
+  if (titleEl) titleEl.textContent = page.title;
+  if (introEl) introEl.textContent = page.intro || "";
+
+  const bodyEl = document.getElementById("customBody");
+  if (bodyEl) {
+    bodyEl.innerHTML = (page.body || "")
+      .split(/\n{2,}/)
+      .map((para) => `<p>${para.replace(/\n/g, "<br>")}</p>`)
+      .join("");
+  }
+
+  const grid = document.getElementById("customProducts");
+  if (grid) {
+    const items = (page.products || [])
+      .map((id) => getProductById(id))
+      .filter(Boolean);
+    if (items.length === 0) {
+      grid.innerHTML = "";
+    } else {
+      grid.innerHTML = items.map((p) => productCardHTML(p)).join("");
+      bindAddToCartButtons();
+      bindProductCardLinks();
+    }
+  }
+}
+
 /* ---------- Init ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   renderProductGrid();
@@ -502,4 +692,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initFooterYear();
   renderCartPage();
   renderProductPage();
+  initPageBuilder();
+  renderCustomPage();
 });

@@ -825,6 +825,38 @@ ul {
   display: none;
 }
 
+/* Sidbyggare */
+.page-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.page-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  flex-wrap: wrap;
+}
+
+.page-row-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#customBody p {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  max-width: 720px;
+}
+
 /* Responsivt */
 @media (max-width: 900px) {
   .hero-inner {
