@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produkt – Nordic Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Nordic<span>Shop</span></a>
+      <nav class="main-nav" aria-label="Huvudmeny">
+        <a href="produkter.html">Produkter</a>
+        <a href="nyheter.html">Nyheter</a>
+        <a href="om-oss.html">Om oss</a>
+        <a href="index.html#kontakt">Kontakt</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" id="searchToggle" aria-label="Sök" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <a href="kundvagn.html" class="icon-btn cart-btn" aria-label="Kundvagn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </a>
+      </div>
+    </div>
+    <div class="search-panel" id="searchPanel" hidden>
+      <div class="container">
+        <input type="search" id="searchInput" class="search-input" placeholder="Sök produkter…" autocomplete="off" />
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-head">
+    <div class="container">
+      <h1 id="productTitle">Produkt</h1>
+      <p id="productSubtitle">Läs mer om produkten</p>
+    </div>
+  </section>
+
+  <section class="about">
+    <div class="container about-grid" id="productDetail">
+      <div>
+        <h2 id="productName">Laddar…</h2>
+        <p id="productDesc"></p>
+        <p class="price" id="productPrice" style="font-size:1.5rem;margin:16px 0;"></p>
+        <button class="btn btn-primary" id="productAddBtn" type="button">Lägg i kundvagn</button>
+        <a href="produkter.html" class="btn btn-ghost" style="margin-left:8px;">Tillbaka till produkter</a>
+      </div>
+      <div class="about-visual" id="productVisual" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <footer id="kontakt" class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a href="index.html" class="logo">Nordic<span>Shop</span></a>
+        <p class="footer-text">Kvalitetsprodukter för ett hållbart hem, designade i Skandinavien.</p>
+      </div>
+      <div>
+        <h4>Handla</h4>
+        <ul>
+          <li><a href="produkter.html">Alla produkter</a></li>
+          <li><a href="nyheter.html">Nyheter</a></li>
+          <li><a href="produkter.html?filter=rea">Rea</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kundservice</h4>
+        <ul>
+          <li><a href="om-oss.html#frakt">Frakt &amp; leverans</a></li>
+          <li><a href="om-oss.html#retur">Retur</a></li>
+          <li><a href="om-oss.html#kontakt">Kontakta oss</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Följ oss</h4>
+        <ul>
+          <li><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://facebook.com" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://pinterest.com" target="_blank" rel="noopener">Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>© 2026 NordicShop. Alla rättigheter förbehållna.</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>

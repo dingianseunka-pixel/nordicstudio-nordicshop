@@ -4,13 +4,65 @@ const CART_KEY = "nordicshop_cart";
 
 /* ---------- Produktkatalog (används av sök) ---------- */
 const PRODUCTS = [
-  { id: "mugg", name: "Keramikmugg", desc: "Handgjord, 35 cl", price: 149 },
-  { id: "linnepaslakan", name: "Linnepåslakan", desc: "100% lin, 150x210 cm", price: 499 },
-  { id: "bambuljus", name: "Bambuljus", desc: "Doft: sandelträ", price: 229 },
-  { id: "vas", name: "Vas i stengods", desc: "H 24 cm, matt glasyr", price: 349 },
-  { id: "skarbrada", name: "Träskärbräda", desc: "Ek, 40x20 cm", price: 279 },
-  { id: "ylleplad", name: "Yllepläd", desc: "130x180 cm, mjuk ull", price: 549 },
+  {
+    id: "mugg",
+    name: "Keramikmugg",
+    desc: "Handgjord, 35 cl",
+    price: 149,
+    longDesc:
+      "En handgjord keramikmugg tillverkad av skandinaviska hantverkare. Rymmer 35 cl och tål maskindisk. Den matta glasyren ger ett tidlöst utseende som passar både till vardags och fest.",
+    gradient: "linear-gradient(135deg,#e0e7ff,#c7d2fe)",
+  },
+  {
+    id: "linnepaslakan",
+    name: "Linnepåslakan",
+    desc: "100% lin, 150x210 cm",
+    price: 499,
+    longDesc:
+      "Ett påslakan i 100% europeiskt lin. Linnedesignen andas och blir mjukare för varje tvätt. Mått 150x210 cm passar standarddubbelsäng. Tillverkad med miljövänliga färger.",
+    gradient: "linear-gradient(135deg,#fef3c7,#fde68a)",
+  },
+  {
+    id: "bambuljus",
+    name: "Bambuljus",
+    desc: "Doft: sandelträ",
+    price: 229,
+    longDesc:
+      "Ett doftljus i bambubehållare med varm sandelträdoft. Brinntid cirka 40 timmar. Perfekt för att skapa en lugn stämning i hemmet.",
+    gradient: "linear-gradient(135deg,#dcfce7,#bbf7d0)",
+  },
+  {
+    id: "vas",
+    name: "Vas i stengods",
+    desc: "H 24 cm, matt glasyr",
+    price: 349,
+    longDesc:
+      "En elegant vas i stengods med matt glasyr. Höjd 24 cm. Passar både till snittblommor och som dekorativt objekt i sig. Handtillverkad i små serier.",
+    gradient: "linear-gradient(135deg,#fce7f3,#fbcfe8)",
+  },
+  {
+    id: "skarbrada",
+    name: "Träskärbräda",
+    desc: "Ek, 40x20 cm",
+    price: 279,
+    longDesc:
+      "En rejäl skärbräda i massiv ek, 40x20 cm. Behandlad med livsmedelsgodkänd olja. Tål daglig användning och blir vackrare med åren.",
+    gradient: "linear-gradient(135deg,#e0f2fe,#bae6fd)",
+  },
+  {
+    id: "ylleplad",
+    name: "Yllepläd",
+    desc: "130x180 cm, mjuk ull",
+    price: 549,
+    longDesc:
+      "En mjuk och värmande pläd i 100% ull. Mått 130x180 cm. Vävd i Skandinavien med traditionella tekniker. Perfekt i soffan eller på sängen under kyliga kvällar.",
+    gradient: "linear-gradient(135deg,#ede9fe,#ddd6fe)",
+  },
 ];
+
+function getProductById(id) {
+  return PRODUCTS.find((p) => p.id === id);
+}
 
 /* ---------- Hjälpfunktioner ---------- */
 function formatPrice(n) {
@@ -70,7 +122,8 @@ function showToast(message) {
 /* ---------- Kundvagnsknappar (startsida + produktsida) ---------- */
 function bindAddToCartButtons() {
   document.querySelectorAll(".add-to-cart").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       const card = btn.closest("[data-id]");
       if (!card) return;
       addToCart(
@@ -80,6 +133,70 @@ function bindAddToCartButtons() {
       );
     });
   });
+}
+
+/* ---------- Klickbara produktkort -> produktsida i nytt fönster ---------- */
+function bindProductCardLinks() {
+  document.querySelectorAll(".product-card[data-id]").forEach((card) => {
+    card.style.cursor = "pointer";
+    card.setAttribute("role", "link");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("aria-label", `Läs mer om ${card.dataset.name}`);
+
+    const open = () => {
+      const url = `produkt.html?id=${encodeURIComponent(card.dataset.id)}`;
+      window.open(url, "_blank", "noopener");
+    };
+
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+}
+
+/* ---------- Produktsida ---------- */
+function renderProductPage() {
+  const nameEl = document.getElementById("productName");
+  if (!nameEl) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const product = getProductById(id);
+
+  const titleEl = document.getElementById("productTitle");
+  const subtitleEl = document.getElementById("productSubtitle");
+  const descEl = document.getElementById("productDesc");
+  const priceEl = document.getElementById("productPrice");
+  const visualEl = document.getElementById("productVisual");
+  const addBtn = document.getElementById("productAddBtn");
+
+  if (!product) {
+    if (titleEl) titleEl.textContent = "Produkten hittades inte";
+    if (subtitleEl) subtitleEl.textContent = "Gå tillbaka till produktsidan för att välja en produkt.";
+    nameEl.textContent = "Okänd produkt";
+    if (descEl) descEl.textContent = "";
+    if (priceEl) priceEl.textContent = "";
+    if (addBtn) addBtn.style.display = "none";
+    return;
+  }
+
+  document.title = `${product.name} – Nordic Shop`;
+  if (titleEl) titleEl.textContent = product.name;
+  if (subtitleEl) subtitleEl.textContent = product.desc;
+  nameEl.textContent = product.name;
+  if (descEl) descEl.textContent = product.longDesc;
+  if (priceEl) priceEl.textContent = formatPrice(product.price);
+  if (visualEl) visualEl.style.background = product.gradient;
+
+  if (addBtn) {
+    addBtn.addEventListener("click", () => {
+      addToCart(product.id, product.name, product.price);
+    });
+  }
 }
 
 /* ---------- Sök ---------- */
@@ -235,7 +352,9 @@ function removeItem(id) {
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   bindAddToCartButtons();
+  bindProductCardLinks();
   initSearch();
   initNewsletter();
   renderCartPage();
+  renderProductPage();
 });
