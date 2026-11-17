@@ -1,6 +1,23 @@
 /* NordicShop – gemensam frontend-logik */
 
 const CART_KEY = "nordicshop_cart";
+const NEWSLETTER_KEY = "nordicshop_newsletter";
+const ORDERS_KEY = "nordicshop_orders";
+
+/* ---------- Sidkonfiguration ----------
+ * Registrera nya sidor här. Varje ny HTML-sida behöver bara:
+ *   <main data-page="min-sida"> ... </main>
+ * och så läggs en post till nedan. Då får sidan automatiskt
+ * aktiv meny, årtal i footer och ev. renderare.
+ */
+const PAGE_CONFIG = {
+  home: { title: "Nordic Shop – Kvalitet för vardagen", nav: "index.html" },
+  produkter: { title: "Produkter – Nordic Shop", nav: "produkter.html" },
+  nyheter: { title: "Nyheter – Nordic Shop", nav: "nyheter.html" },
+  "om-oss": { title: "Om oss – Nordic Shop", nav: "om-oss.html" },
+  kundvagn: { title: "Kundvagn – Nordic Shop", nav: "kundvagn.html" },
+  produkt: { title: "Produkt – Nordic Shop", nav: "produkter.html" },
+};
 
 /* ---------- Produktkatalog (används av sök) ---------- */
 const PRODUCTS = [
@@ -62,6 +79,52 @@ const PRODUCTS = [
 
 function getProductById(id) {
   return PRODUCTS.find((p) => p.id === id);
+}
+
+/* ---------- Dynamisk rendering av produktkort ---------- */
+function productCardHTML(p, opts = {}) {
+  const tag = opts.tag
+    ? `<span class="tag ${opts.tagClass || ""}">${opts.tag}</span>`
+    : "";
+  const priceHTML = opts.oldPrice
+    ? `<span class="price"><s>${formatPrice(opts.oldPrice)}</s> ${formatPrice(p.price)}</span>`
+    : `<span class="price">${formatPrice(p.price)}</span>`;
+
+  return `
+    <article class="product-card" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">
+      <div class="product-image" style="background: ${p.gradient};">
+        ${tag}
+      </div>
+      <div class="product-body">
+        <h3>${p.name}</h3>
+        <p class="product-desc">${p.desc}</p>
+        <div class="product-footer">
+          ${priceHTML}
+          <button class="btn btn-small add-to-cart" type="button">Lägg i kundvagn</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderProductGrid() {
+  document.querySelectorAll('[data-render="products"]').forEach((grid) => {
+    const limit = Number(grid.dataset.limit) || PRODUCTS.length;
+    grid.innerHTML = PRODUCTS.slice(0, limit)
+      .map((p) => productCardHTML(p))
+      .join("");
+  });
+}
+
+function renderNewsGrid() {
+  document.querySelectorAll('[data-render="news"]').forEach((grid) => {
+    const news = PRODUCTS.filter((p) =>
+      ["bambuljus", "vas", "skarbrada"].includes(p.id)
+    );
+    grid.innerHTML = news
+      .map((p) => productCardHTML(p, { tag: "Nyhet", tagClass: "tag-new" }))
+      .join("");
+  });
 }
 
 /* ---------- Hjälpfunktioner ---------- */
@@ -197,6 +260,17 @@ function renderProductPage() {
       addToCart(product.id, product.name, product.price);
     });
   }
+
+  renderRelatedProducts(product.id);
+}
+
+function renderRelatedProducts(currentId) {
+  const container = document.getElementById("relatedProducts");
+  if (!container) return;
+  const related = PRODUCTS.filter((p) => p.id !== currentId).slice(0, 3);
+  container.innerHTML = related.map((p) => productCardHTML(p)).join("");
+  bindAddToCartButtons();
+  bindProductCardLinks();
 }
 
 /* ---------- Sök ---------- */
@@ -207,6 +281,13 @@ function initSearch() {
   const results = document.getElementById("searchResults");
   if (!toggle || !panel || !input || !results) return;
 
+  const closePanel = () => {
+    panel.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+    input.value = "";
+    results.innerHTML = "";
+  };
+
   toggle.addEventListener("click", () => {
     const isOpen = !panel.hidden;
     panel.hidden = isOpen;
@@ -214,9 +295,18 @@ function initSearch() {
     if (!isOpen) {
       input.focus();
     } else {
-      input.value = "";
-      results.innerHTML = "";
+      closePanel();
     }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !panel.hidden) closePanel();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (panel.hidden) return;
+    if (panel.contains(e.target) || toggle.contains(e.target)) return;
+    closePanel();
   });
 
   input.addEventListener("input", () => {
@@ -240,8 +330,10 @@ function initSearch() {
       row.className = "search-result";
       row.innerHTML = `
         <div>
-          <strong>${p.name}</strong>
-          <div class="product-desc">${p.desc}</div>
+          <a href="produkt.html?id=${encodeURIComponent(p.id)}" class="search-result-link">
+            <strong>${p.name}</strong>
+            <div class="product-desc">${p.desc}</div>
+          </a>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
           <span class="price">${formatPrice(p.price)}</span>
@@ -262,8 +354,43 @@ function initNewsletter() {
   if (!form) return;
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    const email = form.querySelector('input[type="email"]').value.trim();
+    if (!email) return;
+    try {
+      const list = JSON.parse(localStorage.getItem(NEWSLETTER_KEY)) || [];
+      if (!list.includes(email)) list.push(email);
+      localStorage.setItem(NEWSLETTER_KEY, JSON.stringify(list));
+    } catch {
+      /* ignorera */
+    }
     form.reset();
     showToast("Tack för din prenumeration!");
+  });
+}
+
+/* ---------- Kontaktformulär ---------- */
+function initContactForm() {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    form.reset();
+    showToast("Tack! Vi återkommer inom kort.");
+  });
+}
+
+/* ---------- Aktiv meny + årtal ---------- */
+function initActiveNav() {
+  const path = window.location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".main-nav a").forEach((a) => {
+    const href = a.getAttribute("href");
+    if (href === path) a.classList.add("nav-active");
+  });
+}
+
+function initFooterYear() {
+  document.querySelectorAll(".footer-bottom p").forEach((p) => {
+    p.textContent = p.textContent.replace(/©\s*\d{4}/, `© ${new Date().getFullYear()}`);
   });
 }
 
@@ -289,10 +416,12 @@ function renderCartPage() {
 
   container.innerHTML = "";
   cart.forEach((item) => {
+    const product = getProductById(item.id);
+    const gradient = product ? product.gradient : "linear-gradient(135deg,#e0e7ff,#c7d2fe)";
     const el = document.createElement("div");
     el.className = "cart-item";
     el.innerHTML = `
-      <div class="cart-thumb"></div>
+      <div class="cart-thumb" style="background: ${gradient};"></div>
       <div>
         <h3>${item.name}</h3>
         <p class="product-desc">${formatPrice(item.price)} / st</p>
@@ -326,6 +455,17 @@ function renderCartPage() {
   `;
 
   document.getElementById("checkoutBtn").addEventListener("click", () => {
+    try {
+      const orders = JSON.parse(localStorage.getItem(ORDERS_KEY)) || [];
+      orders.push({
+        date: new Date().toISOString(),
+        items: cart,
+        total,
+      });
+      localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    } catch {
+      /* ignorera */
+    }
     showToast("Tack för ditt köp! (testbeställning)");
     saveCart([]);
     renderCartPage();
@@ -350,11 +490,16 @@ function removeItem(id) {
 
 /* ---------- Init ---------- */
 document.addEventListener("DOMContentLoaded", () => {
+  renderProductGrid();
+  renderNewsGrid();
   updateCartCount();
   bindAddToCartButtons();
   bindProductCardLinks();
   initSearch();
   initNewsletter();
+  initContactForm();
+  initActiveNav();
+  initFooterYear();
   renderCartPage();
   renderProductPage();
 });
