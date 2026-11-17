@@ -14,19 +14,25 @@
     <div class="container header-inner">
       <a href="#" class="logo">Nordic<span>Shop</span></a>
       <nav class="main-nav" aria-label="Huvudmeny">
-        <a href="#produkter">Produkter</a>
-        <a href="#nyheter">Nyheter</a>
-        <a href="#om">Om oss</a>
-        <a href="#kontakt">Kontakt</a>
+        <a href="produkter.html">Produkter</a>
+        <a href="nyheter.html">Nyheter</a>
+        <a href="om-oss.html">Om oss</a>
+        <a href="index.html#kontakt">Kontakt</a>
       </nav>
       <div class="header-actions">
-        <button class="icon-btn" aria-label="Sök">
+        <button class="icon-btn" id="searchToggle" aria-label="Sök" aria-expanded="false">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </button>
-        <button class="icon-btn cart-btn" aria-label="Kundvagn">
+        <a href="kundvagn.html" class="icon-btn cart-btn" aria-label="Kundvagn">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span class="cart-count" id="cartCount">0</span>
-        </button>
+        </a>
+      </div>
+    </div>
+    <div class="search-panel" id="searchPanel" hidden>
+      <div class="container">
+        <input type="search" id="searchInput" class="search-input" placeholder="Sök produkter…" autocomplete="off" />
+        <div class="search-results" id="searchResults"></div>
       </div>
     </div>
   </header>
@@ -38,8 +44,8 @@
         <h1>Design som håller – för ett hållbart hem</h1>
         <p>Upptäck noggrant utvalda produkter i skandinavisk stil. Fri frakt över 499 kr och 30 dagars öppet köp.</p>
         <div class="hero-actions">
-          <a href="#produkter" class="btn btn-primary">Handla nu</a>
-          <a href="#nyheter" class="btn btn-ghost">Se nyheter</a>
+          <a href="produkter.html" class="btn btn-primary">Handla nu</a>
+          <a href="nyheter.html" class="btn btn-ghost">Se nyheter</a>
         </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
@@ -82,7 +88,7 @@
         <p>Våra mest älskade favoriter just nu.</p>
       </div>
       <div class="product-grid">
-        <article class="product-card">
+        <article class="product-card" data-id="mugg" data-name="Keramikmugg" data-price="149">
           <div class="product-image" style="background: linear-gradient(135deg,#e0e7ff,#c7d2fe);">
             <span class="tag">Bästsäljare</span>
           </div>
@@ -96,7 +102,7 @@
           </div>
         </article>
 
-        <article class="product-card">
+        <article class="product-card" data-id="linnepaslakan" data-name="Linnepåslakan" data-price="499">
           <div class="product-image" style="background: linear-gradient(135deg,#fef3c7,#fde68a);"></div>
           <div class="product-body">
             <h3>Linnepåslakan</h3>
@@ -108,7 +114,7 @@
           </div>
         </article>
 
-        <article class="product-card">
+        <article class="product-card" data-id="bambuljus" data-name="Bambuljus" data-price="229">
           <div class="product-image" style="background: linear-gradient(135deg,#dcfce7,#bbf7d0);">
             <span class="tag tag-new">Nyhet</span>
           </div>
@@ -122,7 +128,7 @@
           </div>
         </article>
 
-        <article class="product-card">
+        <article class="product-card" data-id="vas" data-name="Vas i stengods" data-price="349">
           <div class="product-image" style="background: linear-gradient(135deg,#fce7f3,#fbcfe8);"></div>
           <div class="product-body">
             <h3>Vas i stengods</h3>
@@ -134,7 +140,7 @@
           </div>
         </article>
 
-        <article class="product-card">
+        <article class="product-card" data-id="skarbrada" data-name="Träskärbräda" data-price="279">
           <div class="product-image" style="background: linear-gradient(135deg,#e0f2fe,#bae6fd);"></div>
           <div class="product-body">
             <h3>Träskärbräda</h3>
@@ -146,7 +152,7 @@
           </div>
         </article>
 
-        <article class="product-card">
+        <article class="product-card" data-id="ylleplad" data-name="Yllepläd" data-price="549">
           <div class="product-image" style="background: linear-gradient(135deg,#ede9fe,#ddd6fe);">
             <span class="tag">Rea</span>
           </div>
@@ -169,8 +175,8 @@
         <h2>Få 10% på ditt första köp</h2>
         <p>Prenumerera på vårt nyhetsbrev och ta del av exklusiva erbjudanden.</p>
       </div>
-      <form class="newsletter-form" onsubmit="event.preventDefault(); this.reset(); alert('Tack för din prenumeration!');">
-        <input type="email" placeholder="Din e-postadress" required />
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" name="email" placeholder="Din e-postadress" required />
         <button type="submit" class="btn btn-primary">Prenumerera</button>
       </form>
     </div>
@@ -185,25 +191,25 @@
       <div>
         <h4>Handla</h4>
         <ul>
-          <li><a href="#produkter">Alla produkter</a></li>
-          <li><a href="#nyheter">Nyheter</a></li>
-          <li><a href="#">Rea</a></li>
+          <li><a href="produkter.html">Alla produkter</a></li>
+          <li><a href="nyheter.html">Nyheter</a></li>
+          <li><a href="produkter.html?filter=rea">Rea</a></li>
         </ul>
       </div>
       <div>
         <h4>Kundservice</h4>
         <ul>
-          <li><a href="#">Frakt &amp; leverans</a></li>
-          <li><a href="#">Retur</a></li>
-          <li><a href="#">Kontakta oss</a></li>
+          <li><a href="om-oss.html#frakt">Frakt &amp; leverans</a></li>
+          <li><a href="om-oss.html#retur">Retur</a></li>
+          <li><a href="om-oss.html#kontakt">Kontakta oss</a></li>
         </ul>
       </div>
       <div>
         <h4>Följ oss</h4>
         <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">Facebook</a></li>
-          <li><a href="#">Pinterest</a></li>
+          <li><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://facebook.com" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://pinterest.com" target="_blank" rel="noopener">Pinterest</a></li>
         </ul>
       </div>
     </div>
@@ -212,6 +218,7 @@
     </div>
   </footer>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
 </html>
