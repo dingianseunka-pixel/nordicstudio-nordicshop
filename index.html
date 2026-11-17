@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nordic Shop – Kvalitet för vardagen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo">Nordic<span>Shop</span></a>
+      <nav class="main-nav" aria-label="Huvudmeny">
+        <a href="#produkter">Produkter</a>
+        <a href="#nyheter">Nyheter</a>
+        <a href="#om">Om oss</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="Sök">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn cart-btn" aria-label="Kundvagn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <span class="badge">Ny kollektion 2026</span>
+        <h1>Design som håller – för ett hållbart hem</h1>
+        <p>Upptäck noggrant utvalda produkter i skandinavisk stil. Fri frakt över 499 kr och 30 dagars öppet köp.</p>
+        <div class="hero-actions">
+          <a href="#produkter" class="btn btn-primary">Handla nu</a>
+          <a href="#nyheter" class="btn btn-ghost">Se nyheter</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-card card-1"></div>
+        <div class="hero-card card-2"></div>
+        <div class="hero-card card-3"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container features-grid">
+      <div class="feature">
+        <div class="feature-icon">🚚</div>
+        <h3>Snabb leverans</h3>
+        <p>Leverans inom 1–3 arbetsdagar.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <h3>Säker betalning</h3>
+        <p>Krypterad och trygg checkout.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">↩️</div>
+        <h3>30 dagars retur</h3>
+        <p>Öppet köp på alla varor.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⭐</div>
+        <h3>4,8 av 5</h3>
+        <p>Över 12 000 nöjda kunder.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="produkter" class="products">
+    <div class="container">
+      <div class="section-head">
+        <h2>Populära produkter</h2>
+        <p>Våra mest älskade favoriter just nu.</p>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg,#e0e7ff,#c7d2fe);">
+            <span class="tag">Bästsäljare</span>
+          </div>
+          <div class="product-body">
+            <h3>Keramikmugg</h3>
+            <p class="product-desc">Handgjord, 35 cl</p>
+            <div class="product-footer">
+              <span class="price">149 kr</span>
+              <button class="btn btn-small add-to-cart">Lägg i kundvagn</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg,#fef3c7,#fde68a);"></div>
+          <div class="product-body">
+            <h3>Linnepåslakan</h3>
+            <p class="product-desc">100% lin, 150x210 cm</p>
+            <div class="product-footer">
+              <span class="price">499 kr</span>
+              <button class="btn btn-small add-to-cart">Lägg i kundvagn</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg,#dcfce7,#bbf7d0);">
+            <span class="tag tag-new">Nyhet</span>
+          </div>
+          <div class="product-body">
+            <h3>Bambuljus</h3>
+            <p class="product-desc">Doft: sandelträ</p>
+            <div class="product-footer">
+              <span class="price">229 kr</span>
+              <button class="btn btn-small add-to-cart">Lägg i kundvagn</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg,#fce7f3,#fbcfe8);"></div>
+          <div class="product-body">
+            <h3>Vas i stengods</h3>
+            <p class="product-desc">H 24 cm, matt glasyr</p>
+            <div class="product-footer">
+              <span class="price">349 kr</span>
+              <button class="btn btn-small add-to-cart">Lägg i kundvagn</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg,#e0f2fe,#bae6fd);"></div>
+          <div class="product-body">
+            <h3>Träskärbräda</h3>
+            <p class="product-desc">Ek, 40x20 cm</p>
+            <div class="product-footer">
+              <span class="price">279 kr</span>
+              <button class="btn btn-small add-to-cart">Lägg i kundvagn</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg,#ede9fe,#ddd6fe);">
+            <span class="tag">Rea</span>
+          </div>
+          <div class="product-body">
+            <h3>Yllepläd</h3>
+            <p class="product-desc">130x180 cm, mjuk ull</p>
+            <div class="product-footer">
+              <span class="price"><s>699 kr</s> 549 kr</span>
+              <button class="btn btn-small add-to-cart">Lägg i kundvagn</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="nyheter" class="newsletter">
+    <div class="container newsletter-inner">
+      <div>
+        <h2>Få 10% på ditt första köp</h2>
+        <p>Prenumerera på vårt nyhetsbrev och ta del av exklusiva erbjudanden.</p>
+      </div>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); this.reset(); alert('Tack för din prenumeration!');">
+        <input type="email" placeholder="Din e-postadress" required />
+        <button type="submit" class="btn btn-primary">Prenumerera</button>
+      </form>
+    </div>
+  </section>
+
+  <footer id="kontakt" class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a href="#" class="logo">Nordic<span>Shop</span></a>
+        <p class="footer-text">Kvalitetsprodukter för ett hållbart hem, designade i Skandinavien.</p>
+      </div>
+      <div>
+        <h4>Handla</h4>
+        <ul>
+          <li><a href="#produkter">Alla produkter</a></li>
+          <li><a href="#nyheter">Nyheter</a></li>
+          <li><a href="#">Rea</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kundservice</h4>
+        <ul>
+          <li><a href="#">Frakt & leverans</a></li>
+          <li><a href="#">Retur</a></li>
+          <li><a href="#">Kontakta oss</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Följ oss</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>© 2026 NordicShop. Alla rättigheter förbehållna.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
